@@ -67,25 +67,6 @@ label {
     font-size: 20px;
     color: #333;
 }
-.dash-radio-items {
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px 14px;
-    border-radius: 6px;
-    box-shadow: 1px 1px 5px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-    font-size: 1rem;
-}
-
-.dash-radio-items input[type="radio"] {
-    margin-right: 6px;
-}
-
-.dash-radio-items label {
-    margin-right: 16px;
-    font-weight: 500;
-    cursor: pointer;
-}
 
 .dash-dropdown:hover {
     border-color: #999;
@@ -114,5 +95,45 @@ label {
     margin-bottom: 6px;
     font-weight: 600;
     font-size: 1.05rem;
+}
+
+.bottom-row {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    height: 700px;
+}
+
+.left-panel {
+    flex: 2;
+    padding-right: 10px;
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#right-panel {
+    height: 100%;
+}
+
+#left-panel {
+    height: 100%;
+}
+
+
+#energy-pie {
+    flex: 3;
+    height: 100%;
+}
+
+#pie-year-slider {
+    flex: 1;
+    margin-left: 10px;
+    height: 100%;
 }
 

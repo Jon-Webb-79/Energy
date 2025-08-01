@@ -160,6 +160,29 @@ def create_app():
 
         dcc.Graph(id="energy-plot", style={"height": "700px"}),
 
+        # Lower third divided into 2/3 and 1/3 columns
+        html.Div(className="bottom-row", children=[
+
+            html.Div(id="left-panel", children=[
+                # Placeholder — you can insert another dcc.Graph or custom content later
+                html.Div("← Placeholder for future plot", style={"height": "700px", "padding": "10px"})
+            ], className="left-panel"),
+
+            html.Div(id="right-panel", children=[
+                dcc.Graph(id="energy-pie"),
+                dcc.Slider(
+                    id="pie-year-slider",
+                    min=min_year,
+                    max=max_year,
+                    step=1,
+                    value=max_year,
+                    marks={year: str(year) for year in range(min_year, max_year + 1, 5)},
+                    vertical=True,
+                    tooltip={"always_visible": True}
+                )
+            ], className="right-panel"),
+        ]),
+
         html.A(
             "Source: U.S. Energy Information Administration (EIA)",
             href="https://www.eia.gov/totalenergy/data/browser/index.php?tbl=T01.02#/?f=M&start=197301&end=202504&charted=1-2-3-4-6-13",
@@ -265,6 +288,53 @@ def update_plot(sources, time_res, view_type, year_range):
         paper_bgcolor="#ffffff"
     )
 
+    return fig
+
+# ------------------------------------------------------------------------------------------
+
+@app.callback(
+    Output("energy-pie", "figure"),
+    Input("pie-year-slider", "value")
+)
+def update_pie(selected_year):
+    df = app.df_full.copy()
+    df["Year"] = df["Date"].dt.year
+
+    # Filter to selected year
+    df_year = df[df["Year"] == selected_year]
+
+    # Aggregate total by column
+    totals = df_year.drop(columns=["Date", "Year"]).sum()
+
+    # Define categories
+    pie_data = {
+        "Gas": totals.get("GasDry", 0) + totals.get("GasLiquid", 0),
+        "Coal": totals.get("Coal", 0),
+        "Nuclear": totals.get("Nuclear", 0),
+        "Wind": totals.get("Wind", 0),
+        "Solar": totals.get("Solar", 0),
+        "All Others": (
+            totals.get("Hydro", 0) +
+            totals.get("Geothermal", 0) +
+            totals.get("Biomass", 0)
+        )
+    }
+
+    fig = go.Figure(data=[
+        go.Pie(
+            labels=list(pie_data.keys()),
+            values=list(pie_data.values()),
+            hole=0.4,
+            textinfo="label+percent",
+            marker=dict(line=dict(color="white", width=2))
+        )
+    ])
+    fig.update_layout(
+        title=f"Energy Mix for {selected_year}",
+        title_font=dict(size=26, family="Roboto", color="#333"),
+        margin=dict(t=40, b=20, l=20, r=20),
+        showlegend=True
+    )
     return fig
 
 # ========================================================================================== 
