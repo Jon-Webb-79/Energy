@@ -1,0 +1,118 @@
+/* assets/styles.css */
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.dash-container {
+    width: 90%;
+    max-width: 2800px;
+    margin: 0 auto;
+    padding: 20px 40px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 45px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-right: 10px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.dash-dropdown,
+.dash-radio-items {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+#source-selector {
+    width: 100%;
+}
+
+.dash-graph {
+    border: 1px solid #ccc;
+    background-color: white;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+}
+
+.source-link {
+    font-size: 14px;
+    color: #3366cc;
+    text-align: center;
+    margin-top: 20px;
+    display: block;
+    text-decoration: none;
+}
+#year-slider {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+/* Style the font size of year labels (marks) */
+#year-slider .rc-slider-mark-text {
+    font-size: 20px;
+    color: #333;
+}
+.dash-radio-items {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px 14px;
+    border-radius: 6px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.dash-radio-items input[type="radio"] {
+    margin-right: 6px;
+}
+
+.dash-radio-items label {
+    margin-right: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.dash-dropdown:hover {
+    border-color: #999;
+}
+
+.dash-dropdown:focus-within {
+    border-color: #3366cc;
+    box-shadow: 0 0 0 2px rgba(51,102,204,0.2);
+}
+
+.control-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.control-block {
+    flex: 1;
+    min-width: 250px;
+}
+
+.control-block label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
