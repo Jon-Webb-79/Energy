@@ -164,8 +164,7 @@ def create_app():
         html.Div(className="bottom-row", children=[
 
             html.Div(id="left-panel", children=[
-                # Placeholder — you can insert another dcc.Graph or custom content later
-                html.Div("← Placeholder for future plot", style={"height": "700px", "padding": "10px"})
+                dcc.Graph(id="grouped-plot", style={"height": "700px"})
             ], className="left-panel"),
 
             html.Div(id="right-panel", children=[
@@ -254,8 +253,8 @@ def update_plot(sources, time_res, view_type, year_range):
     
     y_label = "% of Total Mix" if view_type == "percent" else "Quadrillion Btu"
     fig.update_layout(
-        xaxis_title="<b>Date</b>",
-        yaxis_title=f"<b>{y_label}</b>",
+        xaxis_title="Date",
+        yaxis_title=f"{y_label}",
 
         xaxis=dict(
             title_font=dict(size=26, family="Roboto", color="#333"),
@@ -334,6 +333,71 @@ def update_pie(selected_year):
         title_font=dict(size=26, family="Roboto", color="#333"),
         margin=dict(t=40, b=20, l=20, r=20),
         showlegend=True
+    )
+    return fig
+
+# ------------------------------------------------------------------------------------------ 
+
+@app.callback(
+    Output("grouped-plot", "figure"),
+    Input("time-selector", "value"),
+    Input("view-selector", "value"),
+    Input("year-slider", "value")
+)
+def update_grouped_plot(time_res, view_type, year_range):
+    df = app.df_full.copy()
+    start_year, end_year = year_range
+    df = df[(df["Date"].dt.year >= start_year) & (df["Date"].dt.year <= end_year)]
+
+    if time_res == "annual":
+        df = aggregate_annual(df)
+
+    # Define grouped categories
+    df["Fossil Fuels"] = df.get("Coal", 0) + df.get("GasDry", 0) + df.get("GasLiquid", 0)
+    df["Nuclear"] = df.get("Nuclear", 0)
+    df["Renewables"] = df.get("Solar", 0) + df.get("Wind", 0) + df.get("Biomass", 0)
+
+    grouped_df = df[["Date", "Fossil Fuels", "Nuclear", "Renewables"]]
+
+    if view_type == "percent":
+        totals = grouped_df[["Fossil Fuels", "Nuclear", "Renewables"]].sum(axis=1)
+        for col in ["Fossil Fuels", "Nuclear", "Renewables"]:
+            grouped_df[col] = grouped_df[col] / totals * 100
+
+    fig = go.Figure()
+    for col in ["Fossil Fuels", "Nuclear", "Renewables"]:
+        fig.add_trace(go.Scatter(
+            x=grouped_df["Date"],
+            y=grouped_df[col],
+            mode="lines",
+            name=col,
+            line=dict(width=3),
+            hovertemplate=f"{col}: %{{y:.2f}}{'%' if view_type == 'percent' else ''}<extra></extra>"
+        ))
+
+    fig.update_layout(
+        #title=f"{'Annual' if time_res == 'annual' else 'Monthly'} Grouped Energy Production ({'%' if view_type == 'percent' else 'Quadrillion Btu'})",
+        title_font=dict(size=26, family="Roboto", color="#333"),
+        yaxis_title="% of Mix" if view_type == "percent" else "Quadrillion Btu",
+        xaxis_title="Date",
+        plot_bgcolor="#ffffff",
+        paper_bgcolor="#ffffff",
+        margin=dict(t=40, b=40, l=60, r=20),
+        legend=dict(
+            font=dict(size=13),
+            bgcolor="rgba(255,255,255,0.8)",
+            bordercolor="lightgray",
+            borderwidth=1
+        ),
+        hovermode="x unified",
+        xaxis=dict(
+            title_font=dict(size=26, family="Roboto", color="#333"),
+            tickfont=dict(size=14, family="Roboto")
+        ),
+        yaxis=dict(
+            title_font=dict(size=26, family="Roboto", color="#333"),
+            tickfont=dict(size=14, family="Roboto")
+        )
     )
     return fig
 
